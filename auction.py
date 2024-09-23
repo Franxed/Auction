@@ -1,24 +1,13 @@
 # Imported Libraries.
-
 import random
 
-# These are the npc's that will bid against you.
-users = ['James',
-         'John',
-         'Peter',
-         'Oliver',
-         'John',
-         'Mikael',
-         'Marinette',
-         'Simon',
-         'Phillip',
-         'Fiona',
-         'Martin',
-         'Stacy',
-         'Olivia']
+# These are the NPCs that will bid against you.
+users = [
+    'James', 'John', 'Peter', 'Oliver', 'Mikael', 'Marinette', 'Simon',
+    'Phillip', 'Fiona', 'Martin', 'Stacy', 'Olivia'
+]
 
-# These are the items that the npc's will offer to trade.
-
+# These are the items that the NPCs will offer to trade.
 auction_items = {
     "Antique vase": 5000,
     "Vintage car": 30000,
@@ -43,79 +32,64 @@ auction_items = {
 }
 
 # Choose a user and item randomly.
-
 item = random.choice(list(auction_items.items()))
 user = random.choice(users)
 
-print(f"Auction item : {item[0]}. \nThe staring price is R{item[1]}!\n")
+print(f"Auction item: {item[0]}.\nThe starting price is R{item[1]}!\n")
 
-# User's bid.
+# NPC's initial bid.
 new_price = item[1] + random.randint(100, 1000)
 print(f"{user} bids R{new_price} for the {item[0]}.")
 
+
 while True:
     try:
-        query = input("Bid? (Y/N) : ").lower()
+        query = input("Bid? (Y/N): ").lower()
 
         # If user agrees to bid.
         if query == "y" or query == "yes":
-            name = str(input("What is your name? : ")).title()               # Require name.
-            bid = int(input(f"How many would you like to bid? : "))     # Require amount.
+            name = input("What is your name?: ").title()  # Require name.
 
-            # If the user bid is bigger than competitor.
-            if bid > new_price:
-                print(f"{name} bids {bid}!")
-                new_price = new_price + random.randint(100, 1000)       # Competitor rebid. ('thinking')
+            # Loop until user enters a valid bid.
+            while True:
+                bid = int(input(f"How much would you like to bid? (Current bid is R{new_price}): "))
 
-                # If the competitor bid is bigger than user's bid, print it.
-                if new_price > bid:
-                    print(f"{user} bid R{new_price} for {item[0]}!")
+                # If the user bid is bigger than competitor.
+                if bid > new_price:
+                    print(f"{name} bids R{bid}!")
 
-                    new_query = str(input("Continue bid? (Y/N) : ")).lower()
+                    # NPC decides whether to continue bidding.
+                    npc_decision = random.choice([True, False])
+                    if npc_decision:
+                        new_price = bid + random.randint(100, 1000)  # Competitor rebid.
+                        user = random.choice(users)
+                        print(f"{user} bids R{new_price} for the {item[0]}!")
 
-                    if new_query == "y" or new_query == "yes":
-                        new_bid = int(input(f"How many would you like to bid? : "))
-                        print(f"{name} bids {new_bid}!.")
-
-                        new_price = new_price + random.randint(100, 1000)  # Competitor rebid. ('thinking')
-                        print(f"{user} bids R{new_price} for the {item[0]}.")
-
-                        if new_price > new_bid:
+                        # Ask user if they want to continue bidding.
+                        continue_query = input("Continue bidding? (Y/N): ").lower()
+                        if continue_query == "y" or continue_query == "yes":
+                            continue  # Go back to the bid input loop.
+                        elif continue_query == "n" or continue_query == "no":
                             print(f"{user} won this auction with the {item[0]} for R{new_price}!")
-                            break
-
+                            break  # Exit the bid input loop.
                         else:
-                            print(f"Cannot bid under or equal to R{new_price}!")
+                            print("Incorrect input. Please enter 'Y' or 'N'.")
                             continue
-
-                    elif new_query == "n" or new_query == "no":
-                        print(f"{user} won this auction with the {item[0]} for R{new_price}!")
-                        break
-
                     else:
-                        print("Incorrect input.")
-                        continue
-
+                        print(f"{name} won this auction with the {item[0]} for R{bid}!")
+                        break  # Exit the bid input loop.
                 else:
-                    print(f"{name} won this auction with the {item[0]} for R{bid}!")
-                    break
-            elif bid < new_price:
-                print(f"Cannot bid under or equal to R{new_price}!")
-                continue
+                    print(f"Cannot bid under or equal to R{new_price}! Please enter a higher bid.")
+                    continue  # Prompt for the bid again.
 
-            else:
-                print(f"{user} won this auction with the {item[0]} for R{new_price}!")
+            break  # Exit the main auction loop after the auction is over.
 
         elif query == "n" or query == "no":
             print(f"{user} won this auction with the {item[0]} for R{new_price}!")
+            break
 
         else:
-            print("Incorrect input. Input either 'yes/y' or 'no/n'.")
-
-
-
-
-
+            print("Incorrect input. Please enter 'Y' or 'N'.")
 
     except ValueError as ve:
-        print(f"Error : {ve}")
+        print(f"Error: Please enter a valid number. {ve}")
